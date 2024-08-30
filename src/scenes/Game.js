@@ -1,28 +1,39 @@
-import { Scene } from 'phaser';
+import { Scene } from "phaser";
 
-export class Game extends Scene
-{
-    constructor ()
-    {
-        super('Game');
+export class Game extends Scene {
+  constructor() {
+    super("Game");
+  }
+
+  create() {
+    this.cameras.main.setBackgroundColor("#b1aeba");
+
+    const { width, height } = this.scale;
+
+    this.layers = [];
+    for (let i = 1; i <= 5; i++) {
+      const layer = this.add
+        .tileSprite(0, 0, width, height, `layer${i}`)
+        .setOrigin(0, 0)
+        .setScale(
+          height / this.textures.get(`layer${i}`).getSourceImage().height
+        );
+      this.layers.push(layer);
     }
 
-    create ()
-    {
-        this.cameras.main.setBackgroundColor(0x00ff00);
-
-        this.add.image(512, 384, 'background').setAlpha(0.5);
-
-        this.add.text(512, 384, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5);
-
-        this.input.once('pointerdown', () => {
-
-            this.scene.start('GameOver');
-
-        });
+    const platforms = this.physics.add.staticGroup();
+    for (let i = 1; i <= 81; i++) {
+      const x = Phaser.Math.Between(0, width);
+      const y = Phaser.Math.Between(0, height);
+      platforms.create(x, y, `tile${i}`);
     }
+  }
+
+  update() {
+    this.layers[0].tilePositionX += 0.5;
+    this.layers[1].tilePositionX += 1;
+    this.layers[2].tilePositionX += 1.5;
+    this.layers[3].tilePositionX += 2;
+    this.layers[4].tilePositionX += 2.5;
+  }
 }
